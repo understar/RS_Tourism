@@ -5,12 +5,15 @@ from arcpy import env
 from arcpy.sa import *
 
 env.workspace = "G:/Landsat_CX/data/product"
+env.snapRaster = "G:/Landsat_CX/data/image/川西小环线.tif"
+elevRaster = arcpy.sa.Raster(r"G:\Landsat_CX\data\dem\CX_DEM48N.tif")
+env.extent = elevRaster.extent
 
 # 输入遥感分类栅格
-inRaster = "CX_GLC.tif" # 欧空局分类图
-# inRaster = "china30m.tif" # 中国30m全球分类图
+# inRaster = "CX_GLC.tif" # 欧空局分类图
+inRaster = "china30m_clip.tif" # 中国30m全球分类图
 
-# 欧空局分类结果重映射
+''' 欧空局分类结果重映射
 myRemapVal = arcpy.sa.RemapValue([
 	[0,0],
 	[10,3], # cropland 农田、旱地
@@ -50,8 +53,8 @@ myRemapVal = arcpy.sa.RemapValue([
 	[202,1],
 	[210,8],
 	[220,10]])
-	
-''' 中国30m全球分类结果重映射
+''' 
+#中国30m全球分类结果重映射
 myRemapVal = arcpy.sa.RemapValue([
 	[0,0],  # 未分类
 	[10,6], # 10 Cultivated land 耕地
@@ -65,10 +68,9 @@ myRemapVal = arcpy.sa.RemapValue([
 	[90,1], # 90 Bareland 裸地
 	[100,10]# 100 Permanent snow and ice 永久冰雪
 	])
-'''
 
 # 执行重分类
 outReclassRV = Reclassify(inRaster, "VALUE", myRemapVal, "")
 
 # 保存分类结果
-outReclassRV.save("CX_BEAUTY.tif")
+outReclassRV.save("CX_BEAUTY_china30m.tif")
